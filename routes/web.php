@@ -14,9 +14,7 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard-general', function(){
-        return "Dashboard general";
-    })->name('dashboard-general');
+    Route::get('/dashboard-general', DashboardGeneral::class)->name('dashboard-general');
 });
 
 

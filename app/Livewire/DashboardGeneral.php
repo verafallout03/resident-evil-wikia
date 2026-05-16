@@ -56,6 +56,6 @@ class DashboardGeneral extends Component
 
     public function render()
     {
-        return view('livewire.dashboard-general');
+        return view('dashboard-general');
     }
 }
