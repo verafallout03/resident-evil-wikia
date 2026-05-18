@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Characters;
 use App\Livewire\DashboardGeneral;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,10 @@ Route::view('profile', 'profile')
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard-general', DashboardGeneral::class)->name('dashboard-general');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard-characters', Characters::class)->name('characters');
 });
 
 
