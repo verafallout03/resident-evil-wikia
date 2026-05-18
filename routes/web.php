@@ -1,8 +1,12 @@
 <?php
 
+use App\Livewire\CharacterDetail;
 use App\Livewire\Characters;
 use App\Livewire\DashboardGeneral;
+use App\Livewire\GameDetail;
 use App\Livewire\Games;
+use App\Livewire\ItemDetail;
+use App\Livewire\LocationDetail;
 use App\Livewire\Locations;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard-general', DashboardGeneral::class)->name('dashboard-general');
     Route::get('/dashboard-games', Games::class)->name('games');
     Route::get('/dashboard-locations', Locations::class)->name('locations');
+    Route::get('/characters/{slug}', CharacterDetail::class)->name('characters-detail');
+    Route::get('/locations/{slug}', LocationDetail::class)->name('locations-detail');
+    Route::get('/games/{slug}', GameDetail::class)->name('games-detail');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
