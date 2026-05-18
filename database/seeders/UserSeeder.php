@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
                 'email'             => 'guest@example.com',
                 'email_verified_at' => null,
                 'password'          => Hash::make('password'),
-                'role'              => 'guest',
+                'role'              => 'editor',
                 'avatar'            => null,
                 'bio'               => null,
                 'remember_token'    => null,

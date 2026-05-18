@@ -22,7 +22,8 @@ class DashboardGeneral extends Component
                 DB::table('games')
                     ->select('id','title as name','slug','cover_image as image', DB::raw("'game' as type"))
             )
-            ->paginate(12); // 👈 aquí ya tienes paginación unificada
+            ->orderByRaw('RAND()')
+            ->paginate(12);
 
         return view('dashboard-general', compact('items'));
     }
