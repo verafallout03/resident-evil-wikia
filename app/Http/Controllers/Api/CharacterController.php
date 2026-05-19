@@ -2,48 +2,64 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\Character;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CharacterController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return Character::select('id','name','slug','image')
+            ->orderByRaw('RAND()')
+            ->paginate($request->get('per_page', 12));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function show($slug)
+    {
+        return Character::where('slug', $slug)->firstOrFail();
+    }
+
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name'        => 'required|string|max:255',
+            'slug'        => 'required|unique:characters|max:255',
+            'image'       => 'required|string',
+            'alias'       => 'nullable|string',
+            'nationality' => 'nullable|string',
+            'status'      => 'nullable|string',
+            'description' => 'nullable|string',
+            'lore'        => 'nullable|string',
+            'birth_date'  => 'nullable|string',
+            'height_cm'   => 'nullable|integer',
+            'blood_type'  => 'nullable|string',
+        ]);
+        return Character::create($data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, $slug)
     {
-        //
+        $character = Character::where('slug', $slug)->firstOrFail();
+        $character->update($request->validate([
+            'name'        => 'sometimes|string|max:255',
+            'image'       => 'sometimes|string',
+            'alias'       => 'nullable|string',
+            'nationality' => 'nullable|string',
+            'status'      => 'nullable|string',
+            'description' => 'nullable|string',
+            'lore'        => 'nullable|string',
+            'birth_date'  => 'nullable|string',
+            'height_cm'   => 'nullable|integer',
+            'blood_type'  => 'nullable|string',
+        ]));
+        return $character;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy($slug)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $character = Character::where('slug', $slug)->firstOrFail();
+        $character->delete();
+        return response()->noContent();
     }
 }
