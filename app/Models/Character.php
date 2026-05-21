@@ -21,6 +21,8 @@ class Character extends Model
         'is_playable',
         'is_published',
         'lore',
+        'game_id',
+        'location_id',
     ];
 
     // Relaciones
