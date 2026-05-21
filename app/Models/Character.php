@@ -25,6 +25,12 @@ class Character extends Model
         'location_id',
     ];
 
+    protected $casts = [
+        'birth_date'   => 'date',
+        'is_playable'  => 'boolean',
+        'is_published' => 'boolean',
+    ];
+
     public function getRouteKeyName(): string
     {
         return 'slug';
