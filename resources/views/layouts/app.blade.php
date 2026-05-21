@@ -30,9 +30,14 @@
                         <nav>
                             <ul class="space-y-2">
                                 <li><a href="{{ route('dashboard-general') }}" class="block hover:bg-gray-700 p-2 rounded">General</a></li>
-                                <li><a href="{{ route('characters') }}"class="block hover:bg-gray-700 p-2 rounded">Personajes</a></li>
-                                <li><a class="block hover:bg-gray-700 p-2 rounded">Locaciones</a></li>
-                                <li><a class="block hover:bg-gray-700 p-2 rounded">Juegos</a></li>
+                                <li class="pt-2 text-xs font-semibold uppercase text-gray-400 px-2">Wikia</li>
+                                <li><a href="{{ route('characters') }}" class="block hover:bg-gray-700 p-2 rounded">Personajes</a></li>
+                                <li><a href="{{ route('locations') }}" class="block hover:bg-gray-700 p-2 rounded">Locaciones</a></li>
+                                <li><a href="{{ route('games') }}" class="block hover:bg-gray-700 p-2 rounded">Juegos</a></li>
+                                <li class="pt-2 text-xs font-semibold uppercase text-gray-400 px-2">Administrar</li>
+                                <li><a href="{{ route('admin.characters.index') }}" class="block hover:bg-gray-700 p-2 rounded">Personajes</a></li>
+                                <li><a href="{{ route('admin.locations.index') }}" class="block hover:bg-gray-700 p-2 rounded">Locaciones</a></li>
+                                <li><a href="{{ route('admin.games.index') }}" class="block hover:bg-gray-700 p-2 rounded">Juegos</a></li>
                             </ul>
                         </nav>
                     </aside>
