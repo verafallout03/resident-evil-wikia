@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\CharacterController;
+use App\Http\Controllers\Api\GameController;
+use App\Http\Controllers\Api\LocationController;
 use App\Livewire\CharacterDetail;
 use App\Livewire\Characters;
 use App\Livewire\DashboardGeneral;

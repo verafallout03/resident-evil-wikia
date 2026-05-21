@@ -1,23 +1,28 @@
-<?php 
+<?php
 
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Character;
+use App\Services\ApiService;
 
 class CharacterDetail extends Component
 {
-    public $character;
+    public array $character = [];
 
-    public function mount($slug)
+    protected ApiService $api;
+
+    public function boot(ApiService $api): void
     {
-        $this->character = Character::where('slug', $slug)->firstOrFail();
+        $this->api = $api;
+    }
+
+    public function mount(string $slug): void
+    {
+        $this->character = $this->api->get("characters/{$slug}");
     }
 
     public function render()
     {
-        return view('characters-detail', [
-            'character' => $this->character
-        ]);
+        return view('characters-detail');
     }
 }

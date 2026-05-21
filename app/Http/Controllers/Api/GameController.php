@@ -2,48 +2,67 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\Game;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class GameController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $perPage = $request->get('per_page', 12);
+        
+        return Game::select('id', 'title as name', 'slug', 'cover_image as image')
+            ->orderByRaw('RAND()')
+            ->paginate($perPage);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function show($slug)
+    {
+        return Game::where('slug', $slug)->firstOrFail();
+    }
+
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'title'       => 'required|string|max:255',
+            'slug'        => 'required|unique:games|max:255',
+            'cover_image' => 'required|string',
+            'release_year' => 'nullable|integer',
+            'platform'    => 'nullable|string',
+            'developer'   => 'nullable|string',
+            'synopsis'    => 'nullable|string',
+            'canon'       => 'nullable|string',
+            'is_published' => 'nullable|boolean',
+        ]);
+
+        return Game::create($data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, $slug)
     {
-        //
+        $game = Game::where('slug', $slug)->firstOrFail();
+        
+        $data = $request->validate([
+            'title'       => 'sometimes|string|max:255',
+            'slug'        => 'sometimes|unique:games,slug,' . $game->id,
+            'cover_image' => 'sometimes|string',
+            'release_year' => 'nullable|integer',
+            'platform'    => 'nullable|string',
+            'developer'   => 'nullable|string',
+            'synopsis'    => 'nullable|string',
+            'canon'       => 'nullable|string',
+            'is_published' => 'nullable|boolean',
+        ]);
+
+        $game->update($data);
+        return $game;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy($slug)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $game = Game::where('slug', $slug)->firstOrFail();
+        $game->delete();
+        return response()->noContent();
     }
 }

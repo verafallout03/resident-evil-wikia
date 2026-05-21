@@ -3,19 +3,59 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\Character;
+use App\Services\ApiService;
 
 class Characters extends Component
 {
-    use WithPagination;
+    public array $characters = [];
+    public array $pagination = [];
+
+    public int $page = 1;
+
+    protected ApiService $api;
+
+    public function boot(ApiService $api): void
+    {
+        $this->api = $api;
+    }
+
+    public function mount(): void
+    {
+        $this->loadCharacters();
+    }
+
+    public function loadCharacters(): void
+    {
+        $response = $this->api->get('characters', [
+            'page'     => $this->page,
+            'per_page' => 12,
+        ]);
+
+        $this->characters = $response['data'] ?? [];
+        $this->pagination = [
+            'current_page' => $response['current_page'] ?? 1,
+            'last_page'    => $response['last_page'] ?? 1,
+        ];
+    }
+
+    public function nextPage(): void
+    {
+        if ($this->page < $this->pagination['last_page']) {
+            $this->page++;
+            $this->loadCharacters();
+        }
+    }
+
+    public function prevPage(): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->loadCharacters();
+        }
+    }
 
     public function render()
     {
-        $characters = Character::select('id','name','slug','image')
-            ->orderByRaw('RAND()') // 👈 revuelto
-            ->paginate(12);
-
-        return view('characters', compact('characters'));
+        return view('characters');
     }
 }

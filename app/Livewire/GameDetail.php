@@ -1,23 +1,33 @@
 <?php
-
+ 
 namespace App\Livewire;
-
+ 
 use Livewire\Component;
-use App\Models\Game;
-
+use App\Services\ApiService;
+ 
 class GameDetail extends Component
 {
-    public $game;
-
-    public function mount($slug)
+    public array $game = [];
+ 
+    protected ApiService $api;
+ 
+    public function boot(ApiService $api): void
     {
-        $this->game = Game::where('slug', $slug)->firstOrFail();
+        $this->api = $api;
     }
-
+ 
+    public function mount(string $slug): void
+    {
+        try {
+            $this->game = $this->api->get("games/{$slug}");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Juego no encontrado');
+            redirect()->route('games');
+        }
+    }
+ 
     public function render()
     {
-        return view('games-detail', [
-            'game' => $this->game
-        ]);
+        return view('games-detail');
     }
 }

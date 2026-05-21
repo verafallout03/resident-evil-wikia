@@ -1,23 +1,33 @@
 <?php
-
+ 
 namespace App\Livewire;
-
+ 
 use Livewire\Component;
-use App\Models\Location;
-
+use App\Services\ApiService;
+ 
 class LocationDetail extends Component
 {
-    public $location;
-
-    public function mount($slug)
+    public array $location = [];
+ 
+    protected ApiService $api;
+ 
+    public function boot(ApiService $api): void
     {
-        $this->location = Location::where('slug', $slug)->firstOrFail();
+        $this->api = $api;
     }
-
+ 
+    public function mount(string $slug): void
+    {
+        try {
+            $this->location = $this->api->get("locations/{$slug}");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Locación no encontrada');
+            redirect()->route('locations');
+        }
+    }
+ 
     public function render()
     {
-        return view('locations-detail', [
-            'location' => $this->location
-        ]);
+        return view('locations-detail');
     }
 }
