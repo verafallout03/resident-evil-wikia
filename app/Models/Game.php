@@ -18,6 +18,11 @@ class Game extends Model
         'is_published',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     // Relaciones
     public function characters()
     {

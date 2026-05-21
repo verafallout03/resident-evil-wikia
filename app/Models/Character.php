@@ -25,6 +25,11 @@ class Character extends Model
         'location_id',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     // Relaciones
     public function game()
     {

@@ -2,64 +2,84 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Character;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCharacterRequest;
+use App\Http\Requests\UpdateCharacterRequest;
+use App\Models\Character;
+use App\Models\Game;
+use App\Models\Location;
+use Illuminate\Http\Request;
 
 class CharacterController extends Controller
 {
     public function index(Request $request)
     {
-        return Character::select('id','name','slug','image')
-            ->orderByRaw('RAND()')
-            ->paginate($request->get('per_page', 12));
+        if ($request->wantsJson()) {
+            return Character::select('id', 'name', 'slug', 'image')
+                ->orderByRaw('RAND()')
+                ->paginate($request->query('per_page', 12));
+        }
+
+        $characters = Character::with(['game', 'location'])->orderBy('name')->paginate(10);
+        return view('admin.characters.index', compact('characters'));
     }
 
-    public function show($slug)
+    public function show(Request $request, Character $character)
     {
-        return Character::where('slug', $slug)->firstOrFail();
+        if ($request->wantsJson()) {
+            return $character;
+        }
+
+        return view('admin.characters.show', compact('character'));
     }
 
-    public function store(Request $request)
+    public function create()
     {
-        $data = $request->validate([
-            'name'        => 'required|string|max:255',
-            'slug'        => 'required|unique:characters|max:255',
-            'image'       => 'required|string',
-            'alias'       => 'nullable|string',
-            'nationality' => 'nullable|string',
-            'status'      => 'nullable|string',
-            'description' => 'nullable|string',
-            'lore'        => 'nullable|string',
-            'birth_date'  => 'nullable|string',
-            'height_cm'   => 'nullable|integer',
-            'blood_type'  => 'nullable|string',
-        ]);
-        return Character::create($data);
+        $games     = Game::orderBy('title')->get();
+        $locations = Location::orderBy('name')->get();
+        return view('admin.characters.create', compact('games', 'locations'));
     }
 
-    public function update(Request $request, $slug)
+    public function store(StoreCharacterRequest $request)
     {
-        $character = Character::where('slug', $slug)->firstOrFail();
-        $character->update($request->validate([
-            'name'        => 'sometimes|string|max:255',
-            'image'       => 'sometimes|string',
-            'alias'       => 'nullable|string',
-            'nationality' => 'nullable|string',
-            'status'      => 'nullable|string',
-            'description' => 'nullable|string',
-            'lore'        => 'nullable|string',
-            'birth_date'  => 'nullable|string',
-            'height_cm'   => 'nullable|integer',
-            'blood_type'  => 'nullable|string',
-        ]));
-        return $character;
+        $character = Character::create($request->validated());
+
+        if ($request->wantsJson()) {
+            return response()->json($character, 201);
+        }
+
+        return redirect()->route('admin.characters.index')
+            ->with('success', 'Personaje creado correctamente.');
     }
 
-    public function destroy($slug)
+    public function edit(Character $character)
     {
-        $character = Character::where('slug', $slug)->firstOrFail();
+        $games     = Game::orderBy('title')->get();
+        $locations = Location::orderBy('name')->get();
+        return view('admin.characters.edit', compact('character', 'games', 'locations'));
+    }
+
+    public function update(UpdateCharacterRequest $request, Character $character)
+    {
+        $character->update($request->validated());
+
+        if ($request->wantsJson()) {
+            return response()->json($character);
+        }
+
+        return redirect()->route('admin.characters.index')
+            ->with('success', 'Personaje actualizado correctamente.');
+    }
+
+    public function destroy(Request $request, Character $character)
+    {
         $character->delete();
-        return response()->noContent();
+
+        if ($request->wantsJson()) {
+            return response()->noContent();
+        }
+
+        return redirect()->route('admin.characters.index')
+            ->with('success', 'Personaje eliminado correctamente.');
     }
 }

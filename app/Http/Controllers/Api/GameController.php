@@ -15,17 +15,15 @@ class GameController extends Controller
         if ($request->wantsJson()) {
             return Game::select('id', 'title as name', 'slug', 'cover_image as image')
                 ->orderByRaw('RAND()')
-                ->paginate($request->get('per_page', 12));
+                ->paginate($request->query('per_page', 12));
         }
 
         $games = Game::orderBy('release_year')->paginate(10);
         return view('admin.games.index', compact('games'));
     }
 
-    public function show(Request $request, $slug)
+    public function show(Request $request, Game $game)
     {
-        $game = Game::where('slug', $slug)->firstOrFail();
-
         if ($request->wantsJson()) {
             return $game;
         }

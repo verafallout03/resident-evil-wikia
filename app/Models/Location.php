@@ -16,6 +16,11 @@ class Location extends Model
         'is_published',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public function characters()
     {
         return $this->hasMany(Character::class);
