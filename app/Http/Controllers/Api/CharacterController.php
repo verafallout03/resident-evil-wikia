@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCharacterRequest;
 use App\Http\Requests\UpdateCharacterRequest;
+use App\Mail\ContentCreatedMail;
 use App\Models\Character;
 use App\Models\Game;
 use App\Models\Location;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CharacterController extends Controller
 {
@@ -43,6 +47,8 @@ class CharacterController extends Controller
     public function store(StoreCharacterRequest $request)
     {
         $character = Character::create($request->validated());
+
+        $this->notifyAdmins('character', $character->name);
 
         if ($request->wantsJson()) {
             return response()->json($character, 201);

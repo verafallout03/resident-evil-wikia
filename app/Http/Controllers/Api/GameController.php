@@ -9,6 +9,7 @@ use App\Mail\ContentCreatedMail;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class GameController extends Controller
@@ -80,5 +81,13 @@ class GameController extends Controller
 
         return redirect()->route('admin.games.index')
             ->with('success', 'Juego eliminado correctamente.');
+    }
+
+    private function notifyAdmins(string $type, string $name): void
+    {
+        $creator = Auth::user()?->name ?? 'Sistema';
+        User::where('role', 'admin')->each(function (User $admin) use ($type, $name, $creator) {
+            Mail::to($admin->email)->queue(new ContentCreatedMail($type, $name, $creator));
+        });
     }
 }
