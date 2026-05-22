@@ -1,51 +1,31 @@
-<div class="max-w-4xl mx-auto bg-white shadow rounded p-6">
-    <!-- Imagen y datos principales -->
-    <div class="flex items-center space-x-6">
-        <img src="{{ $location['image'] }}" 
-             alt="{{ $location['name'] }}" 
-             class="w-64 h-48 object-cover rounded-lg shadow">
-        <div>
-            <h1 class="text-3xl font-bold mb-2">{{ $location['name'] }}</h1>
-            <p class="text-sm text-gray-500">Región: {{ $location['region'] ?? 'Desconocida' }}</p>
-            <p class="text-sm text-gray-500">País: {{ $location['country'] ?? 'Desconocido' }}</p>
+<div class="mx-auto max-w-4xl">
+    <a href="{{ route('locations') }}" class="mb-4 inline-block text-sm text-gray-500 hover:underline">← Volver a locaciones</a>
+
+    <div class="overflow-hidden rounded-lg bg-white shadow">
+        <div class="flex flex-col items-start gap-6 p-6 sm:flex-row">
+            @if (!empty($location['image']))
+                <img src="{{ $location['image'] }}" alt="{{ $location['name'] }}"
+                     class="h-56 w-64 flex-shrink-0 rounded-lg object-cover shadow">
+            @else
+                <div class="flex h-56 w-64 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200 text-5xl text-gray-400">📍</div>
+            @endif
+
+            <div class="flex-1">
+                <h1 class="text-3xl font-bold text-gray-900">{{ $location['name'] }}</h1>
+
+                <div class="mt-4 grid grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-600">
+                    <div><span class="font-medium">Región:</span> {{ $location['region'] ?? '—' }}</div>
+                    <div><span class="font-medium">País:</span> {{ $location['country'] ?? '—' }}</div>
+                    <div><span class="font-medium">Publicado:</span> {{ $location['is_published'] ? 'Sí' : 'No' }}</div>
+                </div>
+            </div>
         </div>
-    </div>
- 
-    <!-- Descripción -->
-    <div class="mt-6">
-        <h2 class="text-xl font-semibold mb-2">Descripción</h2>
-        <p class="text-gray-700 leading-relaxed">
-            {{ $location['description'] ?? 'Sin descripción disponible.' }}
-        </p>
-    </div>
- 
-    <!-- Sublocaciones -->
-    @if($location['sublocations'] ?? false)
-        <div class="mt-6">
-            <h2 class="text-xl font-semibold mb-2">Sublocaciones</h2>
-            <ul class="list-disc list-inside text-gray-700">
-                @foreach($location['sublocations'] as $sub)
-                    <li>
-                        <a href="{{ route('locations-detail', $sub['slug']) }}" 
-                           class="text-blue-600 hover:underline">
-                           {{ $sub['name'] }}
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
- 
-    <!-- Datos adicionales -->
-    <div class="mt-6 text-sm text-gray-400">
-        <p>Publicado: {{ $location['is_published'] ? 'Sí' : 'No' }}</p>
-        <p>Última actualización: {{ $location['updated_at'] ?? 'N/A' }}</p>
-    </div>
- 
-    <!-- Botón volver -->
-    <div class="mt-8">
-        <a href="{{ route('locations') }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition">
-            ← Volver a locaciones
-        </a>
+
+        @if (!empty($location['description']))
+            <div class="border-t p-6">
+                <h2 class="mb-2 text-lg font-semibold text-gray-800">Descripción</h2>
+                <p class="leading-relaxed text-gray-700">{{ $location['description'] }}</p>
+            </div>
+        @endif
     </div>
 </div>

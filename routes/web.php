@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CharacterController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\ReportController;
 use App\Livewire\CharacterDetail;
 use App\Livewire\Characters;
 use App\Livewire\DashboardGeneral;
@@ -33,11 +34,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/games/{slug}', GameDetail::class)->name('games-detail');
 });
 
-// Admin CRUD
+// Admin CRUD (cualquier usuario autenticado)
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('games', GameController::class)->except(['show']);
     Route::resource('characters', CharacterController::class)->except(['show']);
     Route::resource('locations', LocationController::class)->except(['show']);
+});
+
+// Reportes PDF (solo administradores)
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin/reports')->name('admin.reports.')->group(function () {
+    Route::get('/', [ReportController::class, 'index'])->name('index');
+    Route::get('/characters', [ReportController::class, 'characters'])->name('characters');
+    Route::get('/games', [ReportController::class, 'games'])->name('games');
+    Route::get('/locations', [ReportController::class, 'locations'])->name('locations');
 });
 
 require __DIR__.'/auth.php';

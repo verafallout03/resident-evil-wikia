@@ -28,7 +28,7 @@ class Characters extends Component
     {
         $response = $this->api->get('characters', [
             'page'     => $this->page,
-            'per_page' => 12,
+            'per_page' => 6,
         ]);
 
         $this->characters = $response['data'] ?? [];

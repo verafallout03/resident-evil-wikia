@@ -17,7 +17,7 @@ class CharacterController extends Controller
         if ($request->wantsJson()) {
             return Character::select('id', 'name', 'slug', 'image')
                 ->orderByRaw('RAND()')
-                ->paginate($request->query('per_page', 12));
+                ->paginate($request->query('per_page', 6));
         }
 
         $characters = Character::with(['game', 'location'])->orderBy('name')->paginate(10);

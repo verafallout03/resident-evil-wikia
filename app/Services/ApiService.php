@@ -13,23 +13,28 @@ class ApiService
         $this->base = config('app.url') . '/api';
     }
 
+    protected function client()
+    {
+        return Http::acceptJson();
+    }
+
     public function get(string $endpoint, array $params = []): mixed
     {
-        return Http::get("{$this->base}/{$endpoint}", $params)->json();
+        return $this->client()->get("{$this->base}/{$endpoint}", $params)->json();
     }
 
     public function post(string $endpoint, array $data): mixed
     {
-        return Http::post("{$this->base}/{$endpoint}", $data)->json();
+        return $this->client()->post("{$this->base}/{$endpoint}", $data)->json();
     }
 
     public function put(string $endpoint, array $data): mixed
     {
-        return Http::put("{$this->base}/{$endpoint}", $data)->json();
+        return $this->client()->put("{$this->base}/{$endpoint}", $data)->json();
     }
 
     public function delete(string $endpoint): bool
     {
-        return Http::delete("{$this->base}/{$endpoint}")->successful();
+        return $this->client()->delete("{$this->base}/{$endpoint}")->successful();
     }
 }

@@ -15,7 +15,7 @@ class LocationController extends Controller
         if ($request->wantsJson()) {
             return Location::select('id', 'name', 'slug', 'image')
                 ->orderByRaw('RAND()')
-                ->paginate($request->query('per_page', 12));
+                ->paginate($request->query('per_page', 6));
         }
 
         $locations = Location::withCount('characters')->orderBy('name')->paginate(10);

@@ -28,7 +28,7 @@ class Locations extends Component
         try {
             $response = $this->api->get('locations', [
                 'page'     => $this->page,
-                'per_page' => 12,
+                'per_page' => 6,
             ]);
  
             $this->locations = $response['data'] ?? [];

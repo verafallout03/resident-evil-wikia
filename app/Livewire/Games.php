@@ -28,7 +28,7 @@ class Games extends Component
         try {
             $response = $this->api->get('games', [
                 'page'     => $this->page,
-                'per_page' => 12,
+                'per_page' => 6,
             ]);
  
             $this->games = $response['data'] ?? [];

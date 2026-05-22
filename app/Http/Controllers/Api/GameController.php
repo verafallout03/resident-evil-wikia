@@ -15,7 +15,7 @@ class GameController extends Controller
         if ($request->wantsJson()) {
             return Game::select('id', 'title as name', 'slug', 'cover_image as image')
                 ->orderByRaw('RAND()')
-                ->paginate($request->query('per_page', 12));
+                ->paginate($request->query('per_page', 6));
         }
 
         $games = Game::orderBy('release_year')->paginate(10);

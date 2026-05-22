@@ -1,48 +1,46 @@
-<div class="max-w-4xl mx-auto bg-white shadow rounded p-6">
-    <!-- Imagen y datos principales -->
-    <div class="flex items-center space-x-6">
-        <img src="{{ $character['image'] }}" 
-             alt="{{ $character['name'] }}" 
-             class="w-48 h-48 object-cover rounded-lg shadow">
-        <div>
-            <h1 class="text-3xl font-bold mb-2">{{ $character['name'] }}</h1>
-            
-            @if($character['alias'] ?? false)
-                <p class="text-gray-600 italic">Alias: {{ $character['alias'] }}</p>
+<div class="mx-auto max-w-4xl">
+    <a href="{{ route('characters') }}" class="mb-4 inline-block text-sm text-gray-500 hover:underline">← Volver a personajes</a>
+
+    <div class="overflow-hidden rounded-lg bg-white shadow">
+        <div class="flex flex-col items-start gap-6 p-6 sm:flex-row">
+            @if (!empty($character['image']))
+                <img src="{{ $character['image'] }}" alt="{{ $character['name'] }}"
+                     class="h-56 w-44 flex-shrink-0 rounded-lg object-cover shadow">
+            @else
+                <div class="flex h-56 w-44 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200 text-5xl text-gray-400">?</div>
             @endif
-            
-            <p class="text-sm text-gray-500">Nacionalidad: {{ $character['nationality'] ?? 'Desconocida' }}</p>
-            <p class="text-sm text-gray-500">Estado: {{ $character['status'] ?? 'Desconocido' }}</p>
+
+            <div class="flex-1">
+                <h1 class="text-3xl font-bold text-gray-900">{{ $character['name'] }}</h1>
+
+                @if (!empty($character['alias']))
+                    <p class="mt-1 italic text-gray-500">"{{ $character['alias'] }}"</p>
+                @endif
+
+                <div class="mt-4 grid grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-600">
+                    <div><span class="font-medium">Estado:</span> {{ ucfirst($character['status'] ?? 'Desconocido') }}</div>
+                    <div><span class="font-medium">Facción:</span> {{ $character['faction'] ?? '—' }}</div>
+                    <div><span class="font-medium">Nacionalidad:</span> {{ $character['nationality'] ?? '—' }}</div>
+                    <div><span class="font-medium">Tipo de sangre:</span> {{ $character['blood_type'] ?? '—' }}</div>
+                    <div><span class="font-medium">Altura:</span> {{ $character['height_cm'] ? $character['height_cm'] . ' cm' : '—' }}</div>
+                    <div><span class="font-medium">Nacimiento:</span> {{ $character['birth_date'] ?? '—' }}</div>
+                    <div><span class="font-medium">Jugable:</span> {{ $character['is_playable'] ? 'Sí' : 'No' }}</div>
+                </div>
+            </div>
         </div>
-    </div>
- 
-    <!-- Descripción -->
-    <div class="mt-6">
-        <h2 class="text-xl font-semibold mb-2">Descripción</h2>
-        <p class="text-gray-700 leading-relaxed">
-            {{ $character['description'] ?? 'Sin descripción disponible.' }}
-        </p>
-    </div>
- 
-    <!-- Lore -->
-    <div class="mt-6">
-        <h2 class="text-xl font-semibold mb-2">Lore</h2>
-        <p class="text-gray-700 leading-relaxed">
-            {{ $character['lore'] ?? 'Sin lore disponible.' }}
-        </p>
-    </div>
- 
-    <!-- Datos adicionales -->
-    <div class="mt-6 text-sm text-gray-400">
-        <p>Fecha de nacimiento: {{ $character['birth_date'] ?? 'N/A' }}</p>
-        <p>Altura: {{ $character['height_cm'] ? $character['height_cm'] . ' cm' : 'N/A' }}</p>
-        <p>Tipo de sangre: {{ $character['blood_type'] ?? 'N/A' }}</p>
-    </div>
- 
-    <!-- Botón volver -->
-    <div class="mt-8">
-        <a href="{{ route('characters') }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition">
-            ← Volver a personajes
-        </a>
+
+        @if (!empty($character['description']))
+            <div class="border-t p-6">
+                <h2 class="mb-2 text-lg font-semibold text-gray-800">Descripción</h2>
+                <p class="leading-relaxed text-gray-700">{{ $character['description'] }}</p>
+            </div>
+        @endif
+
+        @if (!empty($character['lore']))
+            <div class="border-t p-6">
+                <h2 class="mb-2 text-lg font-semibold text-gray-800">Lore</h2>
+                <p class="leading-relaxed text-gray-700">{{ $character['lore'] }}</p>
+            </div>
+        @endif
     </div>
 </div>
