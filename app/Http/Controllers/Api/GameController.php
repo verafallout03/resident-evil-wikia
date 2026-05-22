@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use App\Mail\ContentCreatedMail;
 use App\Models\Game;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class GameController extends Controller
 {
@@ -39,6 +42,8 @@ class GameController extends Controller
     public function store(StoreGameRequest $request)
     {
         $game = Game::create($request->validated());
+
+        $this->notifyAdmins('game', $game->title);
 
         if ($request->wantsJson()) {
             return response()->json($game, 201);
