@@ -88,4 +88,12 @@ class CharacterController extends Controller
         return redirect()->route('admin.characters.index')
             ->with('success', 'Personaje eliminado correctamente.');
     }
+
+    private function notifyAdmins(string $type, string $name): void
+    {
+        $creator = Auth::user()?->name ?? 'Sistema';
+        User::where('role', 'admin')->each(function (User $admin) use ($type, $name, $creator) {
+            Mail::to($admin->email)->queue(new ContentCreatedMail($type, $name, $creator));
+        });
+    }
 }

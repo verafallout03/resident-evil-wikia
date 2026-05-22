@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
+use App\Mail\ContentCreatedMail;
 use App\Models\Location;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class LocationController extends Controller
 {
@@ -39,6 +43,8 @@ class LocationController extends Controller
     public function store(StoreLocationRequest $request)
     {
         $location = Location::create($request->validated());
+
+        $this->notifyAdmins('location', $location->name);
 
         if ($request->wantsJson()) {
             return response()->json($location, 201);
@@ -75,5 +81,13 @@ class LocationController extends Controller
 
         return redirect()->route('admin.locations.index')
             ->with('success', 'Locación eliminada correctamente.');
+    }
+
+    private function notifyAdmins(string $type, string $name): void
+    {
+        $creator = Auth::user()?->name ?? 'Sistema';
+        User::where('role', 'admin')->each(function (User $admin) use ($type, $name, $creator) {
+            Mail::to($admin->email)->queue(new ContentCreatedMail($type, $name, $creator));
+        });
     }
 }
