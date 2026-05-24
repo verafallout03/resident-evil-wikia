@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CharacterController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\DashboardController;
 use App\Livewire\CharacterDetail;
 use App\Livewire\Characters;
 use App\Livewire\DashboardGeneral;
@@ -15,9 +16,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::view('dashboard', 'dashboard')
+// Dashboard: redirects to the role-appropriate dashboard
+Route::get('dashboard', [DashboardController::class, 'redirect'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+// Admin dashboard (Gate: admin)
+Route::get('dashboard/admin', [DashboardController::class, 'admin'])
+    ->middleware(['auth', 'verified', 'can:admin'])
+    ->name('dashboard.admin');
+
+// Editor dashboard (Gate: editor)
+Route::get('dashboard/editor', [DashboardController::class, 'editor'])
+    ->middleware(['auth', 'verified', 'can:editor'])
+    ->name('dashboard.editor');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
