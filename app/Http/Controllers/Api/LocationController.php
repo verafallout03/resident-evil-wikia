@@ -5,31 +5,35 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
+use App\Http\Resources\LocationResource;
 use App\Mail\ContentCreatedMail;
 use App\Models\Location;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class LocationController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         if ($request->wantsJson()) {
-            return Location::select('id', 'name', 'slug', 'image')
-                ->orderByRaw('RAND()')
+            $locations = Location::orderByRaw('RAND()')
                 ->paginate($request->query('per_page', 6));
+
+            return LocationResource::collection($locations);
         }
 
         $locations = Location::withCount('characters')->orderBy('name')->paginate(10);
         return view('admin.locations.index', compact('locations'));
     }
 
-    public function show(Request $request, Location $location)
+    public function show(Request $request, Location $location): LocationResource|JsonResponse
     {
         if ($request->wantsJson()) {
-            return $location;
+            return new LocationResource($location);
         }
 
         return view('admin.locations.show', compact('location'));
@@ -40,14 +44,14 @@ class LocationController extends Controller
         return view('admin.locations.create');
     }
 
-    public function store(StoreLocationRequest $request)
+    public function store(StoreLocationRequest $request): LocationResource|JsonResponse
     {
         $location = Location::create($request->validated());
 
         $this->notifyAdmins('location', $location->name);
 
         if ($request->wantsJson()) {
-            return response()->json($location, 201);
+            return (new LocationResource($location))->response()->setStatusCode(201);
         }
 
         return redirect()->route('admin.locations.index')
@@ -59,24 +63,24 @@ class LocationController extends Controller
         return view('admin.locations.edit', compact('location'));
     }
 
-    public function update(UpdateLocationRequest $request, Location $location)
+    public function update(UpdateLocationRequest $request, Location $location): LocationResource|JsonResponse
     {
         $location->update($request->validated());
 
         if ($request->wantsJson()) {
-            return response()->json($location);
+            return new LocationResource($location->fresh());
         }
 
         return redirect()->route('admin.locations.index')
             ->with('success', 'Locación actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Location $location)
+    public function destroy(Request $request, Location $location): JsonResponse
     {
         $location->delete();
 
         if ($request->wantsJson()) {
-            return response()->noContent();
+            return response()->json(null, 204);
         }
 
         return redirect()->route('admin.locations.index')
