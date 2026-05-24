@@ -9,7 +9,9 @@ use App\Http\Resources\GameResource;
 use App\Mail\ContentCreatedMail;
 use App\Models\Game;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Mail;
 
 class GameController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection|JsonResponse
+    public function index(Request $request): AnonymousResourceCollection|View
     {
         if ($request->wantsJson()) {
             $games = Game::orderByRaw('RAND()')
@@ -30,7 +32,7 @@ class GameController extends Controller
         return view('admin.games.index', compact('games'));
     }
 
-    public function show(Request $request, Game $game): GameResource|JsonResponse
+    public function show(Request $request, Game $game): GameResource|View
     {
         if ($request->wantsJson()) {
             return new GameResource($game);
@@ -39,12 +41,12 @@ class GameController extends Controller
         return view('admin.games.show', compact('game'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('admin.games.create');
     }
 
-    public function store(StoreGameRequest $request): GameResource|JsonResponse
+    public function store(StoreGameRequest $request): JsonResponse|RedirectResponse
     {
         $game = Game::create($request->validated());
 
@@ -58,12 +60,12 @@ class GameController extends Controller
             ->with('success', 'Juego creado correctamente.');
     }
 
-    public function edit(Game $game)
+    public function edit(Game $game): View
     {
         return view('admin.games.edit', compact('game'));
     }
 
-    public function update(UpdateGameRequest $request, Game $game): GameResource|JsonResponse
+    public function update(UpdateGameRequest $request, Game $game): GameResource|RedirectResponse
     {
         $game->update($request->validated());
 
@@ -75,7 +77,7 @@ class GameController extends Controller
             ->with('success', 'Juego actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Game $game): JsonResponse
+    public function destroy(Request $request, Game $game): JsonResponse|RedirectResponse
     {
         $game->delete();
 

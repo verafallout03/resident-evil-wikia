@@ -9,7 +9,9 @@ use App\Http\Resources\LocationResource;
 use App\Mail\ContentCreatedMail;
 use App\Models\Location;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Mail;
 
 class LocationController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection|JsonResponse
+    public function index(Request $request): AnonymousResourceCollection|View
     {
         if ($request->wantsJson()) {
             $locations = Location::orderByRaw('RAND()')
@@ -30,7 +32,7 @@ class LocationController extends Controller
         return view('admin.locations.index', compact('locations'));
     }
 
-    public function show(Request $request, Location $location): LocationResource|JsonResponse
+    public function show(Request $request, Location $location): LocationResource|View
     {
         if ($request->wantsJson()) {
             return new LocationResource($location);
@@ -39,12 +41,12 @@ class LocationController extends Controller
         return view('admin.locations.show', compact('location'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('admin.locations.create');
     }
 
-    public function store(StoreLocationRequest $request): LocationResource|JsonResponse
+    public function store(StoreLocationRequest $request): JsonResponse|RedirectResponse
     {
         $location = Location::create($request->validated());
 
@@ -58,12 +60,12 @@ class LocationController extends Controller
             ->with('success', 'Locación creada correctamente.');
     }
 
-    public function edit(Location $location)
+    public function edit(Location $location): View
     {
         return view('admin.locations.edit', compact('location'));
     }
 
-    public function update(UpdateLocationRequest $request, Location $location): LocationResource|JsonResponse
+    public function update(UpdateLocationRequest $request, Location $location): LocationResource|RedirectResponse
     {
         $location->update($request->validated());
 
@@ -75,7 +77,7 @@ class LocationController extends Controller
             ->with('success', 'Locación actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Location $location): JsonResponse
+    public function destroy(Request $request, Location $location): JsonResponse|RedirectResponse
     {
         $location->delete();
 

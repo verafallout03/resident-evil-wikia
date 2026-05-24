@@ -11,7 +11,9 @@ use App\Models\Character;
 use App\Models\Game;
 use App\Models\Location;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\Mail;
 
 class CharacterController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection|JsonResponse
+    public function index(Request $request): AnonymousResourceCollection|View
     {
         if ($request->wantsJson()) {
             $characters = Character::with(['game', 'location'])
@@ -33,7 +35,7 @@ class CharacterController extends Controller
         return view('admin.characters.index', compact('characters'));
     }
 
-    public function show(Request $request, Character $character): CharacterResource|JsonResponse
+    public function show(Request $request, Character $character): CharacterResource|View
     {
         if ($request->wantsJson()) {
             return new CharacterResource($character->load(['game', 'location']));
@@ -42,14 +44,14 @@ class CharacterController extends Controller
         return view('admin.characters.show', compact('character'));
     }
 
-    public function create()
+    public function create(): View
     {
         $games     = Game::orderBy('title')->get();
         $locations = Location::orderBy('name')->get();
         return view('admin.characters.create', compact('games', 'locations'));
     }
 
-    public function store(StoreCharacterRequest $request): CharacterResource|JsonResponse
+    public function store(StoreCharacterRequest $request): JsonResponse|RedirectResponse
     {
         $character = Character::create($request->validated());
 
@@ -63,14 +65,14 @@ class CharacterController extends Controller
             ->with('success', 'Personaje creado correctamente.');
     }
 
-    public function edit(Character $character)
+    public function edit(Character $character): View
     {
         $games     = Game::orderBy('title')->get();
         $locations = Location::orderBy('name')->get();
         return view('admin.characters.edit', compact('character', 'games', 'locations'));
     }
 
-    public function update(UpdateCharacterRequest $request, Character $character): CharacterResource|JsonResponse
+    public function update(UpdateCharacterRequest $request, Character $character): CharacterResource|RedirectResponse
     {
         $character->update($request->validated());
 
@@ -82,7 +84,7 @@ class CharacterController extends Controller
             ->with('success', 'Personaje actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Character $character): JsonResponse
+    public function destroy(Request $request, Character $character): JsonResponse|RedirectResponse
     {
         $character->delete();
 
