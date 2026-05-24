@@ -18,7 +18,8 @@ class CharacterDetail extends Component
 
     public function mount(string $slug): void
     {
-        $this->character = $this->api->get("characters/{$slug}");
+        $response = $this->api->get("characters/{$slug}");
+        $this->character = $response['data'] ?? [];
     }
 
     public function render()

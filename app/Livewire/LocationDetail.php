@@ -4,6 +4,7 @@ namespace App\Livewire;
  
 use Livewire\Component;
 use App\Services\ApiService;
+use Illuminate\Support\Facades\Session;
  
 class LocationDetail extends Component
 {
@@ -19,9 +20,10 @@ class LocationDetail extends Component
     public function mount(string $slug): void
     {
         try {
-            $this->location = $this->api->get("locations/{$slug}");
+            $response = $this->api->get("locations/{$slug}");
+            $this->location = $response['data'] ?? [];
         } catch (\Exception $e) {
-            session()->flash('error', 'Locación no encontrada');
+            Session::flash('error', 'Locación no encontrada');
             redirect()->route('locations');
         }
     }

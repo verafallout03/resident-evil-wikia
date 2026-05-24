@@ -4,6 +4,7 @@ namespace App\Livewire;
  
 use Livewire\Component;
 use App\Services\ApiService;
+use Illuminate\Support\Facades\Session;
  
 class GameDetail extends Component
 {
@@ -19,9 +20,10 @@ class GameDetail extends Component
     public function mount(string $slug): void
     {
         try {
-            $this->game = $this->api->get("games/{$slug}");
+            $response = $this->api->get("games/{$slug}");
+            $this->game = $response['data'] ?? [];
         } catch (\Exception $e) {
-            session()->flash('error', 'Juego no encontrado');
+            Session::flash('error', 'Juego no encontrado');
             redirect()->route('games');
         }
     }
