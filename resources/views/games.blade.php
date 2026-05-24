@@ -8,14 +8,14 @@
         @forelse ($games as $g)
             <a href="{{ route('games-detail', $g['slug']) }}"
                class="group block overflow-hidden rounded-lg bg-white shadow hover:shadow-lg transition">
-                @if (!empty($g['image']))
-                    <img src="{{ $g['image'] }}" alt="{{ $g['name'] }}"
+                @if (!empty($g['cover_image']))
+                    <img src="{{ $g['cover_image'] }}" alt="{{ $g['title'] }}"
                          class="h-48 w-full object-cover group-hover:opacity-90 transition">
                 @else
                     <div class="flex h-48 w-full items-center justify-center bg-gray-200 text-gray-400 text-4xl">🎮</div>
                 @endif
                 <div class="p-3">
-                    <h3 class="font-semibold text-gray-800 truncate">{{ $g['name'] }}</h3>
+                    <h3 class="font-semibold text-gray-800 truncate">{{ $g['title'] }}</h3>
                 </div>
             </a>
         @empty

@@ -4,6 +4,7 @@ namespace App\Livewire;
  
 use Livewire\Component;
 use App\Services\ApiService;
+use Illuminate\Support\Facades\Session;
  
 class Locations extends Component
 {
@@ -33,11 +34,11 @@ class Locations extends Component
  
             $this->locations = $response['data'] ?? [];
             $this->pagination = [
-                'current_page' => $response['current_page'] ?? 1,
-                'last_page'    => $response['last_page'] ?? 1,
+                'current_page' => $response['meta']['current_page'] ?? 1,
+                'last_page'    => $response['meta']['last_page'] ?? 1,
             ];
         } catch (\Exception $e) {
-            session()->flash('error', 'Error al cargar locaciones: ' . $e->getMessage());
+            Session::flash('error', 'Error al cargar locaciones: ' . $e->getMessage());
             $this->locations = [];
         }
     }

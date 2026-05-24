@@ -3,8 +3,10 @@
 namespace App\Livewire\Forms;
 
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Request as RequestFacade;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Validate;
@@ -50,7 +52,7 @@ class LoginForm extends Form
             return;
         }
 
-        event(new Lockout(request()));
+        event(new Lockout(app(Request::class)));
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
@@ -67,6 +69,6 @@ class LoginForm extends Form
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email).'|'.RequestFacade::ip());
     }
 }
